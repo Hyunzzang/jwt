@@ -1,7 +1,0 @@
-app:
-  security:
-    jwt:
-      keystore-location: keys/proc.jks
-      keystore-password: proc123
-      key-alias: proc
-      private-key-passphrase: proc123
