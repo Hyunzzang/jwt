@@ -31,8 +31,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         configurer
                                 .antMatchers(
                                         "/error",
-                                        "/join",
-                                        "/login",
+                                        "/api/v1/join",
+                                        "/api/v1/login",
+                                        "/api/v2/login",
                                         "/h2-console/**"
                                 )
                                 .permitAll()

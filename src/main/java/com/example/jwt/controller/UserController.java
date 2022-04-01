@@ -1,9 +1,6 @@
 package com.example.jwt.controller;
 
 import com.example.jwt.domain.User;
-import com.example.jwt.dto.JoinRequest;
-import com.example.jwt.dto.LoginRequest;
-import com.example.jwt.dto.LoginResponse;
 import com.example.jwt.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +13,12 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
+    @GetMapping("/v1/user")
     public User getUserInfo(Authentication authentication) {
         JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
         Map<String, Object> attributes = token.getTokenAttributes();

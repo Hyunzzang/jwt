@@ -3,6 +3,7 @@ package com.example.jwt.controller;
 import com.example.jwt.dto.JoinRequest;
 import com.example.jwt.dto.LoginRequest;
 import com.example.jwt.dto.LoginResponse;
+import com.example.jwt.dto.TokenInfo;
 import com.example.jwt.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +19,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final UserService userService;
 
-    @PostMapping("/join")
+    @PostMapping("/v1/join")
     public Long join(@RequestBody JoinRequest joinRequest) {
         return userService.sigup(joinRequest);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/v1/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
         return new LoginResponse(userService.sigin(loginRequest));
+    }
+
+    @PostMapping("/v2/login")
+    public TokenInfo login_v2(@RequestBody LoginRequest loginRequest) {
+        return userService.sigin_v2(loginRequest);
     }
 }

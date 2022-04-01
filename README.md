@@ -9,20 +9,20 @@ keytool -genkeypair -alias proc -keyalg RSA -keypass proc123 -keystore proc.jks 
 
 ## API
 ### 1. 회원가입
-> [POST] /api/join
+> [POST] /api/v1/join
 ```
-curl -X POST http://localhost:8080/api/join -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{ "email":"abcd123@gmail.com", "password":"abcd1234"}'
+curl -X POST http://localhost:8080/api/v1/join -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{ "email":"abcd123@gmail.com", "password":"abcd1234"}'
 ```
 
 ### 2. 로그인
 * 로그인 후 JWT 발급
-> [POST] /api/login
+> [POST] /api/v1/login
 ```
-curl -X POST http://localhost:8080/api/login -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{ "email":"abcd123@gmail.com", "password":"abcd1234"}'
+curl -X POST http://localhost:8080/api/v1/login -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{ "email":"abcd123@gmail.com", "password":"abcd1234"}'
 ```
 
 ### 3. 유저정보 확인
-> [GET] /api/user
+> [GET] /api/v1/user
 ```
-curl -X GET http://localhost:8080/api/user -H 'authorization: Bearer {JWT 토큰}' -H 'cache-control: no-cache' -H 'content-type: application/json'
+curl -X GET http://localhost:8080/api/v1/user -H 'authorization: Bearer {JWT 토큰}' -H 'cache-control: no-cache' -H 'content-type: application/json'
 ```
