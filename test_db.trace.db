@@ -1,0 +1,6 @@
+2022-04-01 10:34:23 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USER" not found; SQL statement:
+insert into user (id, created_at, email, password) values (default, ?, ?, ?) [42102-200]
+2022-04-01 10:36:01 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USER" not found; SQL statement:
+insert into user (id, created_at, email, password) values (default, ?, ?, ?) [42102-200]

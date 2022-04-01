@@ -5,3 +5,19 @@ app:
       keystore-password: proc123
       key-alias: proc
       private-key-passphrase: proc123
+
+spring:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:h2:file:./test_db;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+
+logging:
+  level:
+    root: debug

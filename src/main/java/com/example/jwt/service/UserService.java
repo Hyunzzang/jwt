@@ -24,16 +24,16 @@ public class UserService {
 
     public long sigup(JoinRequest joinRequest) {
         return userRepository.save(User.builder()
-                .email(joinRequest.getEmail())
-                .password(passwordEncoder.encode(joinRequest.getPassword()))
+                .email(joinRequest.email())
+                .password(passwordEncoder.encode(joinRequest.password()))
                 .build()).getId();
     }
 
     public String sigin(LoginRequest loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.getEmail())
+        User user = userRepository.findByEmail(loginRequest.email())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
 
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
