@@ -3,7 +3,9 @@ package com.example.jwt.service;
 import com.example.jwt.domain.User;
 import com.example.jwt.dto.JoinRequest;
 import com.example.jwt.dto.LoginRequest;
+import com.example.jwt.dto.LogoutRequest;
 import com.example.jwt.dto.TokenInfo;
+import com.example.jwt.repository.TokenRepository;
 import com.example.jwt.repository.UserRepository;
 import com.example.jwt.security.JwtHelper;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.Map;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
     private final JwtHelper jwtHelper;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -56,7 +59,17 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(loginRequest.toAuthentication());
-         return jwtHelper.generateToken(authentication);
+        TokenInfo tokenInfo = jwtHelper.generateToken(authentication);
+        tokenRepository.saveRefreshToken(authentication.getName(), tokenInfo);
+
+        return tokenInfo;
+    }
+
+    public boolean logout_v2(Authentication authentication) {
+        String userName = authentication.getName();
+        log.info("Logout - UserName: {}", userName);
+
+        return true;
     }
 
     public User getUser(String email) {

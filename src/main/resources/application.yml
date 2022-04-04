@@ -17,6 +17,9 @@ spring:
     url: jdbc:h2:file:./test_db;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver
     username: sa
+  redis:
+    host: localhost
+    port: 6379
 
 logging:
   level:

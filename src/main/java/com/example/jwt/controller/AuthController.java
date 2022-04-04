@@ -7,6 +7,7 @@ import com.example.jwt.dto.TokenInfo;
 import com.example.jwt.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,17 +21,17 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/v1/join")
-    public Long join(@RequestBody JoinRequest joinRequest) {
-        return userService.sigup(joinRequest);
+    public ResponseEntity<Long> join(@RequestBody JoinRequest joinRequest) {
+        return ResponseEntity.ok(userService.sigup(joinRequest));
     }
 
     @PostMapping("/v1/login")
-    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-        return new LoginResponse(userService.sigin(loginRequest));
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(new LoginResponse(userService.sigin(loginRequest)));
     }
 
     @PostMapping("/v2/login")
-    public TokenInfo login_v2(@RequestBody LoginRequest loginRequest) {
-        return userService.sigin_v2(loginRequest);
+    public ResponseEntity<TokenInfo> login_v2(@RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(userService.sigin_v2(loginRequest));
     }
 }

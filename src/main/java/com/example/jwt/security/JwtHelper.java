@@ -1,9 +1,7 @@
 package com.example.jwt.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.example.jwt.dto.TokenInfo;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -32,14 +30,12 @@ public class JwtHelper {
         calendar.setTimeInMillis(Instant.now().toEpochMilli());
         calendar.add(Calendar.HOUR, 3);
 
-        JWTCreator.Builder jwtBuilder = JWT.create().withSubject(subject);
-
-        claims.forEach(jwtBuilder::withClaim);
-
-        return jwtBuilder
-                .withNotBefore(new Date())
-                .withExpiresAt(calendar.getTime())
-                .sign(Algorithm.RSA256(publicKey, privateKey));
+        return Jwts.builder()
+                .setSubject(subject)
+                .setClaims(claims)
+                .setExpiration(calendar.getTime())
+                .signWith(privateKey, SignatureAlgorithm.RS256)
+                .compact();
     }
 
     public TokenInfo generateToken(Authentication authentication) {
@@ -49,16 +45,19 @@ public class JwtHelper {
                 .collect(Collectors.joining(","));
         log.info("authorities: {}", authorities);
 
-        JWTCreator.Builder jwtBuilder = JWT.create().withSubject(authentication.getName());
-        String accessToken = jwtBuilder
-                .withNotBefore(new Date())
-                .withExpiresAt(addMinuteTime(60))
-                .sign(Algorithm.RSA256(publicKey, privateKey));
+        String accessToken = Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim("email", authentication.getName())
+                .setExpiration(addMinuteTime(60 * 1))
+                .signWith(privateKey, SignatureAlgorithm.RS256)
+                .compact();
 
-        String refreshToken = jwtBuilder
-                .withNotBefore(new Date())
-                .withExpiresAt(addMinuteTime(60 * 24 * 7))
-                .sign(Algorithm.RSA256(publicKey, privateKey));
+        String refreshToken = Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim("email", authentication.getName())
+                .setExpiration(addMinuteTime(60 * 24 * 7))
+                .signWith(privateKey, SignatureAlgorithm.RS256)
+                .compact();
 
         return new TokenInfo(accessToken, refreshToken, 60 * 24 * 7);
     }
@@ -69,5 +68,21 @@ public class JwtHelper {
         calendar.add(Calendar.MINUTE, minute);
 
         return calendar.getTime();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token);
+            return true;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.info("Invalid JWT Token", e);
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT Token", e);
+        } catch (UnsupportedJwtException e) {
+            log.info("Unsupported JWT Token", e);
+        } catch (IllegalArgumentException e) {
+            log.info("JWT claims string is empty.", e);
+        }
+        return false;
     }
 }
