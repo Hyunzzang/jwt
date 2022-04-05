@@ -11,10 +11,38 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class TokenRepository {
 
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
 
     public void saveRefreshToken(String userName, TokenInfo tokenInfo) {
-        redisTemplate.opsForValue().set("TOKEN:" + userName, tokenInfo.refreshToken(), tokenInfo.refreshTokenExpire(), TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(makeRefreshTokenKey(userName), tokenInfo.refreshToken(), tokenInfo.refreshTokenExpire(), TimeUnit.MINUTES);
+    }
+
+    public String findRefreshToken(String userName) {
+        return redisTemplate.opsForValue().get(makeRefreshTokenKey(userName));
+    }
+
+    public boolean deleteRefreshToken(String userName) {
+        return redisTemplate.delete(makeRefreshTokenKey(userName));
+    }
+
+    public void saveLogoutToken(String accessToken, Long expiration) {
+        redisTemplate.opsForValue().set(makeLogoutKey(accessToken), "logout", expiration, TimeUnit.MILLISECONDS);
+    }
+
+    public boolean existsLogout(String accessToken) {
+        return redisTemplate.hasKey(makeLogoutKey(accessToken));
+    }
+
+    public String findLogoutToken(String accessToken) {
+        return redisTemplate.opsForValue().get(makeLogoutKey(accessToken));
+    }
+
+    private String makeRefreshTokenKey(String userName) {
+        return String.format("TOKEN:%s", userName);
+    }
+
+    private String makeLogoutKey(String accessToken) {
+        return String.format("TOKEN:LOGOUT:%S", accessToken);
     }
 }

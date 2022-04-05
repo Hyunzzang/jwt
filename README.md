@@ -20,7 +20,8 @@ keytool -genkeypair -alias proc -keyalg RSA -keypass proc123 -keystore proc.jks 
 * 토큰 타임아웃 값을 짦게 유지하고 로그아웃시 클라이언트에서만 삭제
   * 토큰이 삭제 안되고 계속 남아있으면?
 
-### v1 시퀀스
+## V1
+### 시퀀스
 <img src="./img/auth_v1.png" title="v1 시퀀스">
 
 ### 1. 회원가입_v1
@@ -41,3 +42,8 @@ curl -X POST http://localhost:8080/api/v1/login -H 'cache-control: no-cache' -H 
 ```
 curl -X GET http://localhost:8080/api/v1/user -H 'authorization: Bearer {JWT 토큰}' -H 'cache-control: no-cache' -H 'content-type: application/json'
 ```
+
+## V2
+* OAuth2.0 
+* access token, refresh token
+* 로그아웃 처리는 accesstoken를 Blacklist(레디스) 저장해서 체크

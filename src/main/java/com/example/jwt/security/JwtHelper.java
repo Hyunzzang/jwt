@@ -4,22 +4,25 @@ import com.example.jwt.dto.TokenInfo;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtHelper {
+    private static final String AUTHORITIES_KEY = "auth";
     private static final String SECRET_KEY = "secretkey";
 
     private final RSAPrivateKey privateKey;
@@ -47,6 +50,7 @@ public class JwtHelper {
 
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
+                .claim(AUTHORITIES_KEY, authorities)
                 .claim("email", authentication.getName())
                 .setExpiration(addMinuteTime(60 * 1))
                 .signWith(privateKey, SignatureAlgorithm.RS256)
@@ -72,8 +76,8 @@ public class JwtHelper {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token);
-            return true;
+            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token);
+            return !claims.getBody().getExpiration().before(new Date());
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
@@ -84,5 +88,35 @@ public class JwtHelper {
             log.info("JWT claims string is empty.", e);
         }
         return false;
+    }
+
+    public Authentication getAuthentication(String accessToken) {
+        Claims claims = parseClaims(accessToken);
+        if (claims.get(AUTHORITIES_KEY) == null) {
+            throw new IllegalArgumentException("권한 정보가 없습니다.");
+        }
+        // todo: Claims 검증해야 하지 않을까?
+
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+
+        String email = (String) claims.get("email");
+        UserDetails principal = new User(email, "", authorities);
+        return new UsernamePasswordAuthenticationToken(principal, "");
+    }
+
+    public Long getExpiration(String accessToken) {
+        Date expiration = parseClaims(accessToken).getExpiration();
+        return expiration.getTime() - new Date().getTime();
+    }
+
+    private Claims parseClaims(String accessToken) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(accessToken).getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
 }

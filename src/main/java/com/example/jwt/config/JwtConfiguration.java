@@ -1,5 +1,8 @@
 package com.example.jwt.config;
 
+import com.example.jwt.repository.TokenRepository;
+import com.example.jwt.security.JwtFilter;
+import com.example.jwt.security.JwtHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -77,5 +80,10 @@ public class JwtConfiguration {
     @Bean
     public JwtDecoder jwtDecoder(RSAPublicKey jwtValidationKey) {
         return NimbusJwtDecoder.withPublicKey(jwtValidationKey).build();
+    }
+
+    @Bean
+    public JwtFilter jwtFilter(JwtHelper jwtHelper, TokenRepository tokenRepository) {
+        return new JwtFilter(jwtHelper, tokenRepository);
     }
 }
