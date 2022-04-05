@@ -11,7 +11,17 @@ keytool -genkeypair -alias proc -keyalg RSA -keypass proc123 -keystore proc.jks 
 * v1 버전에는 로그아웃 기능이 지원 안됨
 * 로그인후 헤드에 발급받은 토큰을 세팅하여 접근 가능 (authorization: Bearer {발급받은 토큰})
 * WebSecurityConfig 설정에서 OAuth 2.0 리소스 서버(oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)에 대한 JWT 전달자 토큰 지원을 활성화
-* JwtDecoder 빈 설정 하여 spring security에서 jwt 토큰을 복호화 할수 있도록 해야 함
+* JwtDecoder 빈 설정 하여 spring security에서 jwt 토큰을 복호화 할수 있도록 해야 
+
+#### 로그아웃 처리는?
+* 토큰을 저장하여 접근시 체크한다.
+  * 로그인시 저장하여 필터에서 로그아웃된 토큰인지 검증
+  * jwt의 장점인 stateless를 잃어 버린 느낌
+* 토큰 타임아웃 값을 짦게 유지하고 로그아웃시 클라이언트에서만 삭제
+  * 토큰이 삭제 안되고 계속 남아있으면?
+
+### v1 시퀀스
+<img src="./img/auth_v1.png" title="v1 시퀀스">
 
 ### 1. 회원가입_v1
 > [POST] /api/v1/join
