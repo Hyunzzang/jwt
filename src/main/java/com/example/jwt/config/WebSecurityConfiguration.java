@@ -25,29 +25,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/h2-console/**");
     }
 
-    /**
-     * v2
-     * @param http
-     * @throws Exception
-     */
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .httpBasic().disable()  // rest api 이므로 기본설정 사용안함.
-//                .csrf().disable()       // rest api이므로 csrf 보안이 필요없으므로 disable처리.
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .authorizeRequests()    // 다음 리퀘스트에 대한 사용권한 체크
-//                // 누구나 접근 가능 하도록 아래 uri 등록(가입, 로그인, 로그아웃)
-//                .antMatchers("/api/v1/join", "/api/v2/login", "/api/v2/renew", "/api/v2/logout", "/h2-console/**").permitAll()
-////                .antMatchers("/api/v2/user").hasRole("USER")
-//                .anyRequest().authenticated()
-//                .and()
-//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        securityConfigure_v2(http);
+    }
+
+    private void securityConfigure_v1(HttpSecurity http) throws Exception {
         http
                 .cors()
                 .and()
@@ -66,35 +50,23 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                                 .anyRequest()
                                 .authenticated()
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
     }
 
-    /**
-     * v1
-     * @return
-     */
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .cors()
-//                .and()
-//                .csrf().disable()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .authorizeRequests(configurer ->
-//                        configurer
-//                                .antMatchers(
-//                                        "/api/v1/join",
-//                                        "/api/v1/login",
-//                                        "/api/v2/login",
-//                                        "/h2-console/**"
-//                                )
-//                                .permitAll()
-//                                .anyRequest()
-//                                .authenticated()
-//                )
-//                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
-//    }
+    private void securityConfigure_v2(HttpSecurity http) throws Exception {
+        http
+                .httpBasic().disable()  // rest api 이므로 기본설정 사용안함.
+                .csrf().disable()       // rest api이므로 csrf 보안이 필요없으므로 disable처리.
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()    // 다음 리퀘스트에 대한 사용권한 체크
+                // 누구나 접근 가능 하도록 아래 uri 등록(가입, 로그인, 로그아웃)
+                .antMatchers("/api/v1/join", "/api/v2/login", "/api/v2/renew", "/api/v2/logout", "/h2-console/**").permitAll()
+//                .antMatchers("/api/v2/user").hasRole("USER")
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {

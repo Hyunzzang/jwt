@@ -47,3 +47,22 @@ curl -X GET http://localhost:8080/api/v1/user -H 'authorization: Bearer {JWT 토
 * OAuth2.0 
 * access token, refresh token
 * 로그아웃 처리는 accesstoken를 Blacklist(레디스) 저장해서 체크
+
+### 1. 로그인_v2
+* 로그인후 access token, refresh token 발급
+> [POST] /api/v2/login
+```
+curl -X POST http://localhost:8080/api/v2/login -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{ "email":"test0001@gmail.com", "password":"abcd1234"}'
+```
+
+### 2. 유저정보_v2
+> [GET] /api/v2/user
+```
+curl -X GET http://localhost:8080/api/v1/user -H 'authorization: Bearer {access token}' -H 'cache-control: no-cache' -H 'content-type: application/json'
+```
+
+### 3. 로그아웃_v2
+> [POST] /api/v2/logout
+```
+curl -X POST http://localhost:8080/api/v2/login -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{ "accessToken":"{발급받은 access token}", "refreshToken":"{발급받은 refresh token}"}'
+```

@@ -43,7 +43,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList("USER").stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return Collections.singletonList("ROLE_USER").stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override
