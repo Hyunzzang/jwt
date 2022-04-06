@@ -43,6 +43,6 @@ public class TokenRepository {
     }
 
     private String makeLogoutKey(String accessToken) {
-        return String.format("TOKEN:LOGOUT:%S", accessToken);
+        return String.format("TOKEN:LOGOUT:%s", accessToken);
     }
 }

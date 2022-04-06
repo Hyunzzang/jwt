@@ -16,19 +16,21 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 참고 : https://github.com/jwtk/jjwt
+ */
 public class JjwtTest {
     final String SECRET_KEY = "VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHN";
     final Key key =  Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
 
     @Test
     public void creatingEncrypter_Test() {
-        Map<String, String> claims = new HashMap<>();
-        claims.put("email", "test0001@google.com");
-        claims.put("name", "hyun zzang");
 
+        // setClaims 세팅시 setSubject로 세팅 하면 안됨. setClaims map 안에 "subject"키로 세팅 해야함.
         String token = Jwts.builder()
                 .setSubject("test0001")
-                .setClaims(claims)
+                .claim("email", "test0001@google.com")
+                .claim("name", "hyun zzang")
                 .setExpiration(addMinuteTime(60))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -40,7 +42,7 @@ public class JjwtTest {
 
     @Test
     public void parsingToken_test() {
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiaHl1biB6emFuZyIsImVtYWlsIjoidGVzdDAwMDFAZ29vZ2xlLmNvbSIsImV4cCI6MTY0OTE2NjM5MH0._u7UCfYWsXdFGtwBA-qD965L-qVXA2XKmZUIH_iqUFo";
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MDAwMSIsImVtYWlsIjoidGVzdDAwMDFAZ29vZ2xlLmNvbSIsIm5hbWUiOiJoeXVuIHp6YW5nIiwiZXhwIjoxNjQ5MjE1Mjc2fQ.NMZd0gooAvPQlxDa6rgTHGafcbkYczRO4RRDe83MzUM";
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 
         String subject = claims.getSubject();

@@ -30,6 +30,7 @@ public class JwtFilter extends GenericFilterBean {
         log.info("jwt token: {}", token);
         if (StringUtils.isNotEmpty(token) && jwtHelper.validateToken(token)) {
             if (!tokenRepository.existsLogout(token)) {
+                // [주의] Authentication에 authorities 설정 해야함.
                 Authentication authentication = jwtHelper.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
@@ -44,6 +45,6 @@ public class JwtFilter extends GenericFilterBean {
             return null;
         }
 
-        return StringUtils.removeStart(bearerToken, BEARER_TYPE);
+        return StringUtils.removeStart(bearerToken, BEARER_TYPE).trim();
     }
 }

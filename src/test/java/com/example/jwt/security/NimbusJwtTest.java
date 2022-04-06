@@ -17,6 +17,9 @@ import java.text.ParseException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 참고 : https://connect2id.com/products/nimbus-jose-jwt
+ */
 public class NimbusJwtTest {
     final String secret = "841D8A6C80CBA4FCAD32D5367C18C53B";
 

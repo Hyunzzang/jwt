@@ -7,6 +7,24 @@ keytool -genkeypair -alias 앨리어스명 -keyalg 암호알고리즘 -keypass �
 keytool -genkeypair -alias proc -keyalg RSA -keypass proc123 -keystore proc.jks -storepass proc
 ```
 
+## jwt 라이브러리
+### Nimbus JOSE+JWT
+* https://bitbucket.org/connect2id/nimbus-jose-jwt/src/master/
+* Open source Apache 2.0 license
+* jjwt보다 더 많은 기능을 제공 
+* spring security oauth2 에 포함되어 있음
+
+### jwt
+* https://github.com/jwtk/jjwt
+* Open source Apache 2.0 license
+* 단순하고 사용하기 쉬음
+* 많이 사용함
+* 현 데모에 사용
+
+### auth0 java-api
+* https://github.com/auth0/java-jwt
+* MIT license
+
 ## API
 * v1 버전에는 로그아웃 기능이 지원 안됨
 * 로그인후 헤드에 발급받은 토큰을 세팅하여 접근 가능 (authorization: Bearer {발급받은 토큰})
@@ -64,5 +82,11 @@ curl -X GET http://localhost:8080/api/v1/user -H 'authorization: Bearer {access 
 ### 3. 로그아웃_v2
 > [POST] /api/v2/logout
 ```
-curl -X POST http://localhost:8080/api/v2/login -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{ "accessToken":"{발급받은 access token}", "refreshToken":"{발급받은 refresh token}"}'
+curl -X POST http://localhost:8080/api/v2/logout -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{ "accessToken":"{발급받은 access token}", "refreshToken":"{발급받은 refresh token}"}'
+```
+
+#### 4. 토큰갱신
+> [POST] /api/v2/renew
+```
+curl -X POST http://localhost:8080/api/v2/renew -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{ "accessToken":"{발급받은 access token}", "refreshToken":"{발급받은 refresh token}"}'
 ```

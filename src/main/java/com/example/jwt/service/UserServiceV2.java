@@ -35,6 +35,7 @@ public class UserServiceV2 {
         return tokenInfo;
     }
 
+    // todo: 예전 accessToken는 로그인 안되도록 처리 하자.
     public TokenInfo renew(RenewRequest renewRequest) {
         if (!jwtHelper.validateToken(renewRequest.refreshToken())) {
             throw new IllegalArgumentException("Refresh Token이 유효하지 않습니다.");
@@ -43,10 +44,10 @@ public class UserServiceV2 {
         Authentication authentication = jwtHelper.getAuthentication(renewRequest.accessToken());
         String storageRefreshToken = tokenRepository.findRefreshToken(authentication.getName());
         if (StringUtils.isEmpty(storageRefreshToken)) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("저장된 리프레시토큰이 없습니다.");
         }
         if (!StringUtils.equals(renewRequest.refreshToken(), storageRefreshToken)) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("리프레시토큰이 일치하지 않습니다.");
         }
 
         TokenInfo tokenInfo = jwtHelper.generateToken(authentication);

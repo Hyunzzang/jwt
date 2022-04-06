@@ -35,7 +35,7 @@ public class JwtHelper {
 
         return Jwts.builder()
                 .setSubject(subject)
-                .setClaims(claims)
+                .claim("email", claims.get("email"))
                 .setExpiration(calendar.getTime())
                 .signWith(privateKey, SignatureAlgorithm.RS256)
                 .compact();
@@ -104,7 +104,7 @@ public class JwtHelper {
 
         String email = (String) claims.get("email");
         UserDetails principal = new User(email, "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "");
+        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
     public Long getExpiration(String accessToken) {
