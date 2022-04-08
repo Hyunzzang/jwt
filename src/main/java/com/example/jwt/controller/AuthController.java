@@ -20,7 +20,7 @@ public class AuthController {
     private final UserServiceV2 userService_v2;
 
     @PostMapping("/v1/join")
-    public ResponseEntity<Long> join(@RequestBody JoinRequest joinRequest) {
+    public ResponseEntity<Boolean> join(@RequestBody JoinRequest joinRequest) {
         return ResponseEntity.ok(userService.sigup(joinRequest));
     }
 

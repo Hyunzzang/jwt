@@ -42,11 +42,11 @@ public class UserServiceV2 {
         }
 
         Authentication authentication = jwtHelper.getAuthentication(renewRequest.accessToken());
-        String storageRefreshToken = tokenRepository.findRefreshToken(authentication.getName());
-        if (StringUtils.isEmpty(storageRefreshToken)) {
+        String savedRefreshToken = tokenRepository.findRefreshToken(authentication.getName());
+        if (StringUtils.isEmpty(savedRefreshToken)) {
             throw new IllegalArgumentException("저장된 리프레시토큰이 없습니다.");
         }
-        if (!StringUtils.equals(renewRequest.refreshToken(), storageRefreshToken)) {
+        if (!StringUtils.equals(renewRequest.refreshToken(), savedRefreshToken)) {
             throw new IllegalArgumentException("리프레시토큰이 일치하지 않습니다.");
         }
 

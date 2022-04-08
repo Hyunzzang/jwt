@@ -22,15 +22,17 @@ public class UserService {
     private final JwtHelper jwtHelper;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public long sigup(JoinRequest joinRequest) {
+    public boolean sigup(JoinRequest joinRequest) {
         if (userRepository.existsByEmail(joinRequest.email())) {
             throw new IllegalArgumentException("이미 가입된 이메일 입니다.");
         }
 
-        return userRepository.save(User.builder()
+        userRepository.save(User.builder()
                 .email(joinRequest.email())
                 .password(passwordEncoder.encode(joinRequest.password()))
                 .build()).getId();
+
+        return true;
     }
 
     public String sigin(LoginRequest loginRequest) {

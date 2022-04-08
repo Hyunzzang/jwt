@@ -20,6 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
+    // todo: 운영환경에서는 도메인객체(Entity)를 response로 안내려 주도록 하자.
     @GetMapping("/v1/user")
     public ResponseEntity<User> getUserInfo(Authentication authentication) {
         JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
