@@ -41,6 +41,7 @@ public class JwtHelper {
                 .compact();
     }
 
+    // todo: 같은 정보 같은 시간때 이면 토큰 결과는 같음
     public TokenInfo generateToken(Authentication authentication) {
         // 권한정보
         String authorities = authentication.getAuthorities().stream()
@@ -52,6 +53,7 @@ public class JwtHelper {
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .claim("email", authentication.getName())
+//                .setIssuedAt(new Date())
                 .setExpiration(addMinuteTime(60 * 1))
                 .signWith(privateKey, SignatureAlgorithm.RS256)
                 .compact();
@@ -59,6 +61,7 @@ public class JwtHelper {
         String refreshToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("email", authentication.getName())
+//                .setIssuedAt(new Date())
                 .setExpiration(addMinuteTime(60 * 24 * 7))
                 .signWith(privateKey, SignatureAlgorithm.RS256)
                 .compact();
