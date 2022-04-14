@@ -49,6 +49,7 @@ public class UserService {
 
         Map<String, String> claims = new HashMap<>();
         claims.put("email", user.getEmail());
+        claims.put("AUTHORITIES_KEY", user.getRole().getKey());
 
         return jwtHelper.createJwtForClaims(user.getEmail(), claims);
     }

@@ -49,7 +49,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        securityConfigure_v3(http);
+        securityConfigure_v2(http);
     }
 
     /**
@@ -69,7 +69,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                                 .antMatchers(
                                         "/api/v1/join",
                                         "/api/v1/login",
-                                        "/api/v2/login",
                                         "/h2-console/**"
                                 )
                                 .permitAll()

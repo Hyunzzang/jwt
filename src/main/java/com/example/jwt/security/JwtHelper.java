@@ -36,6 +36,7 @@ public class JwtHelper {
         return Jwts.builder()
                 .setSubject(subject)
                 .claim("email", claims.get("email"))
+                .claim("AUTHORITIES_KEY", claims.get("AUTHORITIES_KEY"))
                 .setExpiration(calendar.getTime())
                 .signWith(privateKey, SignatureAlgorithm.RS256)
                 .compact();

@@ -9,7 +9,6 @@ import com.example.jwt.security.oauth2.OAuth2UserInfoFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -28,7 +27,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
 
 
     @Override
@@ -47,24 +45,37 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         Optional<User> savedUser = userRepository.findByEmail(oAuth2UserInfo.getEmail());
-        User user = savedUser.map(u -> updateExistingUser(u, oAuth2UserInfo))
-                .orElse(registerNewUser(oAuth2UserRequest, oAuth2UserInfo));
+        User user;
+        if (savedUser.isPresent()) {
+            user = updateExistingUser(savedUser.get(), oAuth2UserInfo);
+        } else {
+            user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
+        }
+
+//        User user = savedUser.map(u -> updateExistingUser(u, oAuth2UserInfo))
+//                .orElse(registerNewUser(oAuth2UserRequest, oAuth2UserInfo));
 
         return UserPrincipal.create(user, oAuth2User.getAttributes());
     }
 
     private User registerNewUser(OAuth2UserRequest userRequest, OAuth2UserInfo oAuth2UserInfo) {
-        return userRepository.save(User.builder()
+        User user = User.builder()
                 .email(oAuth2UserInfo.getEmail())
                 .name(oAuth2UserInfo.getName())
                 .imageUrl(oAuth2UserInfo.getImageUrl())
                 .provider(AuthProvider.valueOf(userRequest.getClientRegistration().getRegistrationId()))
                 .providerId(oAuth2UserInfo.getId())
-                .build()
-        );
+                .build();
+
+        return userRepository.save(user);
     }
 
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
-        return userRepository.save(existingUser.update(oAuth2UserInfo.getName(), oAuth2UserInfo.getImageUrl()));
+        if (!StringUtils.equals(existingUser.getName(), oAuth2UserInfo.getName())
+                || !StringUtils.equals(existingUser.getImageUrl(), oAuth2UserInfo.getImageUrl())) {
+            return userRepository.save(existingUser.update(oAuth2UserInfo.getName(), oAuth2UserInfo.getImageUrl()));
+        }
+
+        return existingUser;
     }
 }
