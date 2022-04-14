@@ -1,23 +1,18 @@
 package com.example.jwt.domain;
 
+import com.sun.istack.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
-public class User implements UserDetails {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -29,44 +24,41 @@ public class User implements UserDetails {
     @Column(length = 100, nullable = false)
     private String password;
 
+    @Column
+    private String name;
+
+    @Column
+    private String imageUrl;
+
+    @Column
+    private Role role;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
+
+    @Column
+    private String providerId;
+
     @Column(updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
 
     @Builder
-    public User(String email, String password) {
+    public User(String email, String password, String name, String imageUrl, Role role, AuthProvider provider, String providerId) {
         this.email = email;
         this.password = password;
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.role = role;
+        this.provider = provider;
+        this.providerId = providerId;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList("ROLE_USER").stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-    }
-
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+    public User update(String name, String imageUrl) {
+        this.name = name;
+        this.imageUrl = imageUrl;
+        return this;
     }
 }

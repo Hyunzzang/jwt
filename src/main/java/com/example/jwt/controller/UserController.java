@@ -1,10 +1,13 @@
 package com.example.jwt.controller;
 
 import com.example.jwt.domain.User;
+import com.example.jwt.security.CurrentUser;
+import com.example.jwt.security.UserPrincipal;
 import com.example.jwt.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -34,5 +37,11 @@ public class UserController {
         // todo: authentication 없을 경우의 에러 처리
 
         return ResponseEntity.ok(userService.getUser(authentication.getName()));
+    }
+
+    @GetMapping("/v3/user")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<User> getUserInfo_v3(@CurrentUser UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(userService.getUser(userPrincipal.getEmail()));
     }
 }

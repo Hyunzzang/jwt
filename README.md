@@ -93,3 +93,6 @@ curl -X POST http://localhost:8080/api/v2/logout -H 'cache-control: no-cache' -H
 ```
 curl -X POST http://localhost:8080/api/v2/renew -H 'cache-control: no-cache' -H 'content-type: application/json' -d '{ "accessToken":"{발급받은 access token}", "refreshToken":"{발급받은 refresh token}"}'
 ```
+
+## v3
+* http://localhost:8080/oauth2/authorize/google?redirect_url=http://127.0.0.1:8080/api/v3/user

@@ -1,5 +1,7 @@
 package com.example.jwt.service;
 
+import com.example.jwt.domain.AuthProvider;
+import com.example.jwt.domain.Role;
 import com.example.jwt.domain.User;
 import com.example.jwt.dto.JoinRequest;
 import com.example.jwt.dto.LoginRequest;
@@ -30,6 +32,8 @@ public class UserService {
         userRepository.save(User.builder()
                 .email(joinRequest.email())
                 .password(passwordEncoder.encode(joinRequest.password()))
+                .role(Role.USER)
+                .provider(AuthProvider.local)
                 .build()).getId();
 
         return true;
